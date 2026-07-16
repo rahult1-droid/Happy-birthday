@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Meh princhuuu! 🎁</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            var(--bg-color): #ffeef2;
+            --box-color: #ff477e;
+            --box-lid-color: #ff5c8a;
+            --ribbon-color: #ffb703;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #ffeef2;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .heart-particle {
+            position: absolute;
+            color: rgba(255, 71, 126, 0.4);
+            pointer-events: none;
+            animation: floatUp 6s linear infinite;
+            bottom: -10%;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        #music-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        #music-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .gift-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .gift-wrapper:hover { transform: scale(1.05); }
+
+        .scale-1 { transform: scale(1); }
+        .scale-2 { transform: scale(0.85); }
+        .scale-3 { transform: scale(0.7); }
+        .scale-4 { transform: scale(0.55); }
+        .scale-5 { transform: scale(0.4); }
+
+        .gift-box {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            background: var(--box-color);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .lid {
+            position: absolute;
+            width: 220px;
+            height: 50px;
+            background: var(--box-lid-color);
+            top: -45px;
+            left: -10px;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 2;
+        }
+
+        .box-ribbon, .lid-ribbon {
+            position: absolute;
+            background: var(--ribbon-color);
+        }
+        .box-ribbon { width: 30px; height: 100%; left: 85px; }
+        .lid-ribbon { width: 30px; height: 100%; left: 95px; }
+
+        .gift-wrapper.open .lid {
+            transform: translateY(-80px) rotate(-15deg);
+            opacity: 0;
+        }
+        .gift-wrapper.open { pointer-events: none; }
+
+        .card {
+            position: absolute;
+            width: 280px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: scale(0.5) translateY(100px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .card.show {
+            opacity: 1;
+            transform: scale(1) translateY(-40px);
+            pointer-events: auto;
+        }
+
+        #image-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            scroll-snap-type: x mandatory;
+            border-radius: 10px;
+        }
+        
+        #image-container::-webkit-scrollbar { display: none; }
+
+        #image-container img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            flex: 0 0 100%; 
+            scroll-snap-align: center;
+        }
+
+        #card-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+            color: #333;
+            line-height: 1.4;
+            margin: 0 0 15px 0;
+        }
+
+        .next-btn {
+            background: var(--box-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .next-btn:hover { background: #e03265; }
+
+        .final-screen {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+            text-align: center;
+        }
+        .final-screen.show {
+            display: block;
+            opacity: 1;
+        }
+        .final-screen h1 {
+            color: var(--box-color);
+            font-family: 'Dancing Script', cursive;
+            font-size: 4.5rem;
+            margin: 0 0 10px 0;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-beautiful-dream-493.mp3" type="audio/mpeg">
+    </audio>
+    <button id="music-btn" onclick="toggleMusic()">🎵 Play Music</button>
+
+    <div class="container">
+        <div id="gift-clicker" class="gift-wrapper scale-1" onclick="openBox()">
+            <div class="lid">
+                <div class="lid-ribbon"></div>
+            </div>
+            <div class="gift-box">
+                <div class="box-ribbon"></div>
+            </div>
+        </div>
+
+        <div id="content-card" class="card">
+            <div id="image-container"></div>
+            <p id="card-text">Message goes here...</p>
+            <button class="next-btn" onclick="nextBox()">Unwrap Next Layer! ✨</button>
+        </div>
+
+        <div id="final-screen" class="final-screen">
+            <h1>🎉 Happy Birthday! 🎉</h1>
+            <p style="font-size: 1.3rem; color: #555; font-weight: 600;">[This was not tooo good but still i hope you will like it🥺😻]</p>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // ✍️ JUST CHANGE THE TEXT IN THE QUOTES BELOW!
+        // ==========================================
+        const boxData = [
+            {
+                // Soft wrapped gift image
+                img: "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?w=500", 
+                text: "First of all really Happy B'day to uh🥰🎁" 
+            },
+            {
+                // Aesthetic sunset image
+                img: "https://images.unsplash.com/photo-1494548162494-384bba4ab999?w=500", 
+                text: "THE MOON IS BEAUTIFUL,ISN`T IT?"
+            },
+            {
+                // A mini gallery of 3 beautiful aesthetic photos
+                img: [
+                    "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500",
+                    "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500", 
+                    "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=500"
+                ], 
+                text: "May be terko lagta ho ki ab hamari baat nhi hoti hai to mai tujhe yaad nhi krta hounga?"
+            },
+            {
+                // Beautiful starry night image
+                img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500", 
+                text: "par sach kahu to har din teri yaad aahi jati hai, aur aaye bhi kyu na tu hai hi itni khass🥰"
+            },
+            {
+                // Sparkler / Celebration image
+                img: "https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=500", 
+                text: "Khair jo bhi ho, mai bas itna chahta hu ki tu hamehsa muskurati rhe. WITH LOTS OF LOVE💗" 
+            }
+        ];
+
+        // ==========================================
+        // ⚙️ ANIMATION LOGIC (Do not edit below here)
+        // ==========================================
+        let currentStep = 0;
+        const totalSteps = 5;
+
+        const giftWrapper = document.getElementById('gift-clicker');
+        const card = document.getElementById('content-card');
+        const imgContainer = document.getElementById('image-container');
+        const cardText = document.getElementById('card-text');
+        const finalScreen = document.getElementById('final-screen');
+
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            const btn = document.getElementById('music-btn');
+            if (music.paused) {
+                music.play();
+                btn.innerHTML = "🔇 Pause Music";
+            } else {
+                music.pause();
+                btn.innerHTML = "🎵 Play Music";
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-particle');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 4 + 's';
+            heart.style.fontSize = Math.random() * 15 + 15 + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 7000);
+        }
+        setInterval(createHeart, 450);
+
+        function openBox() {
+            if (currentStep >= totalSteps) return;
+
+            imgContainer.innerHTML = ''; 
+            let currentImages = boxData[currentStep].img;
+            
+            if (Array.isArray(currentImages)) {
+                currentImages.forEach(src => {
+                    let imgEl = document.createElement('img');
+                    imgEl.src = src;
+                    imgContainer.appendChild(imgEl);
+                });
+            } else {
+                let imgEl = document.createElement('img');
+                imgEl.src = currentImages;
+                imgContainer.appendChild(imgEl);
+            }
+
+            cardText.innerText = boxData[currentStep].text;
+            giftWrapper.classList.add('open');
+
+            setTimeout(() => {
+                card.classList.add('show');
+            }, 400);
+        }
+
+        function nextBox() {
+            card.classList.remove('show');
+            currentStep++;
+
+            setTimeout(() => {
+                giftWrapper.classList.remove('open');
+                
+                if (currentStep < totalSteps) {
+                    giftWrapper.className = `gift-wrapper scale-${currentStep + 1}`;
+                    giftWrapper.style.pointerEvents = 'auto'; 
+                } else {
+                    giftWrapper.style.display = 'none';
+                    finalScreen.classList.add('show');
+                    
+                    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                    setTimeout(() => {
+                        confetti({ particleCount: 100, spread: 100, origin: { x: 0.3, y: 0.5 } });
+                        confetti({ particleCount: 100, spread: 100, origin: { x: 0.7, y: 0.5 } });
+                    }, 400);
+                }
+            }, 500);
+        }
+    </script>
+</body>
+</html>
